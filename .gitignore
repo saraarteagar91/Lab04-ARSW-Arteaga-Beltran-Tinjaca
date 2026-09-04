@@ -4,6 +4,10 @@
 # IDE
 .idea/
 *.iml
+.vscode/
+
+# Local environment overrides
+.env
 
 # OS
 .DS_Store
