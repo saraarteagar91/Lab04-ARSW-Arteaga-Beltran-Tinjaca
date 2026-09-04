@@ -34,8 +34,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnsupportedOperationException.class)
     public ResponseEntity<ApiError> starterTodo(UnsupportedOperationException ex, HttpServletRequest request) {
-        // This handler makes the incomplete starter explicit instead of leaking a stack trace.
+        // This handler makes an incomplete use case explicit instead of leaking a stack trace.
         return error(HttpStatus.NOT_IMPLEMENTED, "LAB_NOT_IMPLEMENTED", ex.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiError> unexpected(Exception ex, HttpServletRequest request) {
+        // Catch-all so no internal Java message or stack trace ever reaches the client.
+        return error(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", "Unexpected server error", request.getRequestURI());
     }
 
     private ResponseEntity<ApiError> error(HttpStatus status, String code, String message, String path) {

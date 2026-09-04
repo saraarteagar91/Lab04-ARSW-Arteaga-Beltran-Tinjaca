@@ -6,10 +6,7 @@ import java.util.Optional;
 
 /**
  * Output port owned by the application boundary.
- *
- * TODO LAB-04:
- * Review whether these operations are the minimum required by the use cases.
- * Do not add framework-specific abstractions here.
+ * Covers exactly the operations the create/get/replace use cases need.
  */
 public interface BoardRepository {
     Board save(Board board);

@@ -1,8 +1,8 @@
-# ARSW Collaborative Architecture Board — Lab 04 Starter
+# ARSW Collaborative Architecture Board — Lab 04
 
-This repository is the starting point for **Lab #4 — Architecture Foundation**.
+Backend foundation for the ARSW Collaborative Architecture Board, built on the official Lab #4 starter.
 
-The goal is **not** to practice REST syntax. The goal is to build a small backend with explicit architectural boundaries, dependency inversion, constructor injection, consistent error handling, tests, and architecture evidence.
+The goal was **not** to practice REST syntax. The goal was to build a small backend with explicit architectural boundaries, dependency inversion, constructor injection, consistent error handling, tests, and architecture evidence — this is the baseline for Lab #5.
 
 ## Technology baseline
 
@@ -26,33 +26,16 @@ BoardRepository (port)
 InMemoryBoardRepository (adapter)
 ```
 
-## What is already provided
+## What this backend provides
 
-- Project and package structure.
-- Domain types: `Board`, `BoardElement`, `ElementType`.
-- Persistence port and in-memory adapter shell.
-- Application service shell.
-- REST controller shell.
-- Central error contract.
-- Documentation templates.
-- Disabled tests that describe expected behavior.
+- Domain types with invariants: `Board`, `BoardElement`, `ElementType` (`domain/model`, no HTTP/persistence dependencies).
+- Output port `BoardRepository` and its in-memory adapter `InMemoryBoardRepository`.
+- `BoardApplicationService`: create / get / replace use cases, depending only on the `BoardRepository` port (constructor injection).
+- Thin `BoardRestController` exposing `POST /api/boards`, `GET /api/boards/{boardId}`, `PUT /api/boards/{boardId}`.
+- `GlobalExceptionHandler`: uniform `ApiError` contract for not-found boards, invalid requests, invalid domain input, and any unexpected error (no stack traces or internal messages ever leak to the client).
+- Unit tests for the application service and MockMvc tests for the REST contract, including the board-not-found case.
 
-## What you must complete
-
-Search for `TODO LAB-04` in the repository.
-
-At minimum, complete:
-
-1. `BoardRepository` operations required by the use cases.
-2. `InMemoryBoardRepository` behavior.
-3. `BoardApplicationService` use cases.
-4. REST request validation and controller behavior.
-5. Consistent error mapping.
-6. Unit and HTTP-facing tests.
-7. `docs/api-contract.md`.
-8. Architecture diagrams in `docs/architecture/`.
-9. `docs/ADR-001-repository-boundary.md`.
-10. `docs/AI_USAGE.md`.
+See `docs/api-contract.md` for the full REST contract, `docs/ADR-001-repository-boundary.md` for the repository-boundary decision, and `docs/architecture/` for the ArchiMate application view and class diagram.
 
 ## Run
 
@@ -60,10 +43,20 @@ At minimum, complete:
 mvn spring-boot:run
 ```
 
-The starter includes a small landing page at:
+The app serves a small landing page at:
 
 ```text
 http://localhost:8080/
+```
+
+## Try the API
+
+```bash
+curl -X POST http://localhost:8080/api/boards -H "Content-Type: application/json" -d "{\"name\":\"Architecture Session\"}"
+
+curl http://localhost:8080/api/boards/{boardId}
+
+curl -X PUT http://localhost:8080/api/boards/{boardId} -H "Content-Type: application/json" -d "{\"name\":\"Renamed\",\"elements\":[]}"
 ```
 
 ## Verify
@@ -72,7 +65,7 @@ http://localhost:8080/
 mvn test
 ```
 
-The included specification tests are disabled initially. Enable them progressively as you implement the required behavior.
+All tests (application service + REST controller) pass, including the case where a board does not exist.
 
 ## Continuity rule
 

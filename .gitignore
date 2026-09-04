@@ -1,3 +1,13 @@
+# Build output
+/target/
+
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
+
 # Compiled class file
 *.class
 
