@@ -33,7 +33,7 @@ InMemoryBoardRepository (adapter)
 - `BoardApplicationService`: create / get / replace use cases, depending only on the `BoardRepository` port (constructor injection).
 - Thin `BoardRestController` exposing `POST /api/boards`, `GET /api/boards/{boardId}`, `PUT /api/boards/{boardId}`.
 - `GlobalExceptionHandler`: uniform `ApiError` contract for not-found boards, invalid requests, invalid domain input, and any unexpected error (no stack traces or internal messages ever leak to the client).
-- Unit tests for the application service and MockMvc tests for the REST contract, including the board-not-found case.
+- Unit tests for the domain model invariants, the in-memory adapter, `BoardNotFoundException`, the application service, and MockMvc tests for the REST contract, including the board-not-found and invalid-element cases.
 
 See `docs/api-contract.md` for the full REST contract, `docs/ADR-001-repository-boundary.md` for the repository-boundary decision, and `docs/architecture/` for the ArchiMate application view and class diagram.
 
