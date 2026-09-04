@@ -4,6 +4,7 @@ import edu.eci.arsw.collabboard.application.exception.BoardNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,6 +31,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> invalidDomainInput(IllegalArgumentException ex, HttpServletRequest request) {
         return error(HttpStatus.BAD_REQUEST, "INVALID_INPUT", ex.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> malformedRequestBody(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        // A nested BoardElement violating its own invariants throws IllegalArgumentException from its
+        // compact constructor while Jackson is still building the object graph; Spring wraps that in
+        // HttpMessageNotReadableException before bean validation ever runs, so it must be unwrapped here
+        // to keep returning the same INVALID_INPUT contract instead of leaking a generic 500.
+        Throwable cause = ex.getCause();
+        while (cause != null && !(cause instanceof IllegalArgumentException)) {
+            cause = cause.getCause();
+        }
+        if (cause != null) {
+            return error(HttpStatus.BAD_REQUEST, "INVALID_INPUT", cause.getMessage(), request.getRequestURI());
+        }
+        return error(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "Malformed request body", request.getRequestURI());
     }
 
     @ExceptionHandler(UnsupportedOperationException.class)
