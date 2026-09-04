@@ -75,4 +75,48 @@ class BoardRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
     }
+
+    @Test
+    void shouldReturnInvalidInputWhenReplacingWithAnInvalidElement() throws Exception {
+        String createBody = objectMapper.writeValueAsString(new CreateBoardRequest("Architecture Session"));
+
+        String response = mockMvc.perform(post("/api/boards")
+                        .contentType("application/json")
+                        .content(createBody))
+                .andReturn().getResponse().getContentAsString();
+        String boardId = objectMapper.readTree(response).get("id").asText();
+
+        String replaceBody = """
+                {"name":"Renamed Session","elements":[
+                  {"id":"el-1","type":"RECTANGLE","x":1,"y":2,"width":-10,"height":5,"text":""}
+                ]}
+                """;
+
+        mockMvc.perform(put("/api/boards/" + boardId)
+                        .contentType("application/json")
+                        .content(replaceBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_INPUT"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenReplacingWithoutElements() throws Exception {
+        String createBody = objectMapper.writeValueAsString(new CreateBoardRequest("Architecture Session"));
+
+        String response = mockMvc.perform(post("/api/boards")
+                        .contentType("application/json")
+                        .content(createBody))
+                .andReturn().getResponse().getContentAsString();
+        String boardId = objectMapper.readTree(response).get("id").asText();
+
+        String replaceBody = """
+                {"name":"Renamed Session"}
+                """;
+
+        mockMvc.perform(put("/api/boards/" + boardId)
+                        .contentType("application/json")
+                        .content(replaceBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+    }
 }
