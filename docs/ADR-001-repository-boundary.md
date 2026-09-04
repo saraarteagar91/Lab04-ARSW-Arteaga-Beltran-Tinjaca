@@ -21,6 +21,6 @@ An extra interface and package boundary add a small amount of indirection for wh
 
 ## Evidence / validation
 - `BoardApplicationService` constructor takes `BoardRepository repository` (an interface), never `InMemoryBoardRepository` — see `src/main/java/edu/eci/arsw/collabboard/application/service/BoardApplicationService.java`.
-- `BoardApplicationServiceTest` wires the service with `new InMemoryBoardRepository()` directly, with no Spring context, and all four tests pass (`mvn test`).
+- `BoardApplicationServiceTest` wires the service with `new InMemoryBoardRepository()` directly, with no Spring context, and all five tests pass (`mvn test`).
 - `BoardRestController` has no reference to `HashMap`, `InMemoryBoardRepository`, or any infrastructure type — it only calls `BoardApplicationService`.
 - **Sustentación:** if `InMemoryBoardRepository` were replaced by another adapter tomorrow, only a new class implementing `BoardRepository` (in `infrastructure/persistence` or a new adapter package) would need to change/be added. `BoardRepository`, `BoardApplicationService`, `BoardRestController`, `GlobalExceptionHandler`, and the domain model would remain untouched, since none of them reference the concrete adapter.

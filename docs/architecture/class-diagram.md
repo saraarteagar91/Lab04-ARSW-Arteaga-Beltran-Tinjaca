@@ -64,6 +64,8 @@ classDiagram
         +boardNotFound(BoardNotFoundException) ResponseEntity~ApiError~
         +invalidRequest(MethodArgumentNotValidException) ResponseEntity~ApiError~
         +invalidDomainInput(IllegalArgumentException) ResponseEntity~ApiError~
+        +malformedRequestBody(HttpMessageNotReadableException) ResponseEntity~ApiError~
+        +starterTodo(UnsupportedOperationException) ResponseEntity~ApiError~
         +unexpected(Exception) ResponseEntity~ApiError~
     }
 
