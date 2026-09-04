@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BoardApplicationServiceTest {
@@ -47,5 +48,13 @@ class BoardApplicationServiceTest {
     void shouldFailToReplaceWhenBoardDoesNotExist() {
         assertThrows(BoardNotFoundException.class,
                 () -> service.replaceBoard("missing-board", "Any name", List.of()));
+    }
+
+    @Test
+    void shouldGenerateDistinctIdsForEachCreatedBoard() {
+        Board first = service.createBoard("Session A");
+        Board second = service.createBoard("Session B");
+
+        assertNotEquals(first.id(), second.id());
     }
 }
