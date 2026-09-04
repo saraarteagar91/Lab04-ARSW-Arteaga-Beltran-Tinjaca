@@ -59,13 +59,33 @@ curl http://localhost:8080/api/boards/{boardId}
 curl -X PUT http://localhost:8080/api/boards/{boardId} -H "Content-Type: application/json" -d "{\"name\":\"Renamed\",\"elements\":[]}"
 ```
 
+Replace `{boardId}` with the `id` returned by the `POST` call.
+
+> **Windows PowerShell note:** `curl` there is an alias for `Invoke-WebRequest`, and even `curl.exe` mis-parses inline `-d "{...}"` JSON with escaped quotes (PowerShell's native-command argument passing mangles them). Use the automated script below instead of typing these by hand on Windows.
+
+## Demo script (recommended way to verify end to end)
+
+With the app running (`mvn spring-boot:run`), run the matching script from the project root in a second terminal. It creates a board, reads it, replaces it, and hits both documented error cases (`404 BOARD_NOT_FOUND` and `400 INVALID_INPUT`) — printing every response so you can see the full contract working live.
+
+```powershell
+# Windows PowerShell
+.\scripts\demo.ps1
+```
+
+```bash
+# macOS / Linux / Git Bash
+bash scripts/demo.sh
+```
+
+Expected output: five labeled steps, ending in `DEMO COMPLETE`, with a generated `id`, a `200` on read/replace, a `404` for a missing board, and a `400` (never a raw `500`) for an invalid element.
+
 ## Verify
 
 ```bash
 mvn test
 ```
 
-All tests (application service + REST controller) pass, including the case where a board does not exist.
+All tests (domain model, in-memory adapter, application service, and REST controller) pass — 26 tests, including the board-not-found and invalid-element cases.
 
 ## Continuity rule
 
