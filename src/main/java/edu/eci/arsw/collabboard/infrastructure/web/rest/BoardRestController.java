@@ -5,6 +5,7 @@ import edu.eci.arsw.collabboard.domain.model.Board;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,5 +39,11 @@ public class BoardRestController {
     public Board replace(@PathVariable String boardId,
                          @Valid @RequestBody ReplaceBoardRequest request) {
         return service.replaceBoard(boardId, request.name(), request.elements());
+    }
+
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<Void> delete(@PathVariable String boardId) {
+        service.deleteBoard(boardId);
+        return ResponseEntity.noContent().build();
     }
 }
