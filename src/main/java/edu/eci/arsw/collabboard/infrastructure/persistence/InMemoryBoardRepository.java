@@ -36,4 +36,9 @@ public class InMemoryBoardRepository implements BoardRepository {
     public boolean existsById(String boardId) {
         return boards.containsKey(boardId);
     }
+
+    @Override
+    public void deleteById(String boardId) {
+        boards.remove(boardId);
+    }
 }

@@ -45,4 +45,21 @@ class InMemoryBoardRepositoryTest {
 
         assertEquals(Optional.of(updated), repository.findById("board-1"));
     }
+
+    @Test
+    void shouldDeleteExistingBoard() {
+        repository.save(new Board("board-1", "Session", List.of()));
+
+        repository.deleteById("board-1");
+
+        assertFalse(repository.existsById("board-1"));
+        assertEquals(Optional.empty(), repository.findById("board-1"));
+    }
+
+    @Test
+    void shouldNotFailWhenDeletingUnknownBoard() {
+        repository.deleteById("missing-board");
+
+        assertFalse(repository.existsById("missing-board"));
+    }
 }
