@@ -30,8 +30,8 @@ InMemoryBoardRepository (adapter)
 
 - Domain types with invariants: `Board`, `BoardElement`, `ElementType` (`domain/model`, no HTTP/persistence dependencies).
 - Output port `BoardRepository` and its in-memory adapter `InMemoryBoardRepository`.
-- `BoardApplicationService`: create / get / replace use cases, depending only on the `BoardRepository` port (constructor injection).
-- Thin `BoardRestController` exposing `POST /api/boards`, `GET /api/boards/{boardId}`, `PUT /api/boards/{boardId}`.
+- `BoardApplicationService`: create / get / replace / delete use cases, depending only on the `BoardRepository` port (constructor injection).
+- Thin `BoardRestController` exposing `POST /api/boards`, `GET /api/boards/{boardId}`, `PUT /api/boards/{boardId}`, `DELETE /api/boards/{boardId}`.
 - `GlobalExceptionHandler`: uniform `ApiError` contract for not-found boards, invalid requests, invalid domain input, and any unexpected error (no stack traces or internal messages ever leak to the client).
 - Unit tests for the domain model invariants, the in-memory adapter, `BoardNotFoundException`, the application service, and MockMvc tests for the REST contract, including the board-not-found and invalid-element cases.
 
@@ -57,6 +57,8 @@ curl -X POST http://localhost:8080/api/boards -H "Content-Type: application/json
 curl http://localhost:8080/api/boards/{boardId}
 
 curl -X PUT http://localhost:8080/api/boards/{boardId} -H "Content-Type: application/json" -d "{\"name\":\"Renamed\",\"elements\":[]}"
+
+curl -X DELETE http://localhost:8080/api/boards/{boardId}
 ```
 
 Replace `{boardId}` with the `id` returned by the `POST` call.
@@ -85,7 +87,7 @@ Expected output: five labeled steps, ending in `DEMO COMPLETE`, with a generated
 mvn test
 ```
 
-All tests (domain model, in-memory adapter, application service, and REST controller) pass — 26 tests, including the board-not-found and invalid-element cases.
+All tests (domain model, in-memory adapter, application service, and REST controller) pass — 32 tests, including the board-not-found, invalid-element, and delete cases.
 
 ## Continuity rule
 
