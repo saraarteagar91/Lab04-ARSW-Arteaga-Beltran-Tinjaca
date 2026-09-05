@@ -57,4 +57,20 @@ class BoardApplicationServiceTest {
 
         assertNotEquals(first.id(), second.id());
     }
+
+    @Test
+    void shouldDeleteExistingBoard() {
+        Board created = service.createBoard("Architecture Session");
+
+        service.deleteBoard(created.id());
+
+        assertThrows(BoardNotFoundException.class,
+                () -> service.getBoard(created.id()));
+    }
+
+    @Test
+    void shouldFailToDeleteWhenBoardDoesNotExist() {
+        assertThrows(BoardNotFoundException.class,
+                () -> service.deleteBoard("missing-board"));
+    }
 }

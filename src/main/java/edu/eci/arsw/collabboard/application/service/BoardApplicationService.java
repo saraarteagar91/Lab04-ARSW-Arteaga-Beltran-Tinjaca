@@ -35,4 +35,11 @@ public class BoardApplicationService {
         Board replaced = new Board(boardId, name, elements);
         return repository.save(replaced);
     }
+
+    public void deleteBoard(String boardId) {
+        if (!repository.existsById(boardId)) {
+            throw new BoardNotFoundException(boardId);
+        }
+        repository.deleteById(boardId);
+    }
 }
