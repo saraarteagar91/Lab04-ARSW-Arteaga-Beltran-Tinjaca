@@ -14,4 +14,6 @@ public interface BoardRepository {
     Optional<Board> findById(String boardId);
 
     boolean existsById(String boardId);
+
+    void deleteById(String boardId);
 }
