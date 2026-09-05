@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -118,5 +119,29 @@ class BoardRestControllerTest {
                         .content(replaceBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+    }
+
+    @Test
+    void shouldDeleteExistingBoard() throws Exception {
+        String createBody = objectMapper.writeValueAsString(new CreateBoardRequest("Architecture Session"));
+
+        String response = mockMvc.perform(post("/api/boards")
+                        .contentType("application/json")
+                        .content(createBody))
+                .andReturn().getResponse().getContentAsString();
+        String boardId = objectMapper.readTree(response).get("id").asText();
+
+        mockMvc.perform(delete("/api/boards/" + boardId))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/boards/" + boardId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenDeletingUnknownBoard() throws Exception {
+        mockMvc.perform(delete("/api/boards/missing-board"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("BOARD_NOT_FOUND"));
     }
 }
